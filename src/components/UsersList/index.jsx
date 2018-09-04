@@ -24,6 +24,9 @@ export default class UsersList extends Component {
           users,
           pageCount: res.data.pageCount
         })
+      })
+      .catch(err => {
+        console.log(err.response.data)
       });
   }
 

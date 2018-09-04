@@ -7,6 +7,16 @@ class Api {
     };
   };
 
+  static headers = async function(contentType) {
+    const jwt = process.env.REACT_APP_ADMIN_TOKEN
+    let auth_header = 'Bearer ' + jwt;
+
+    return {
+      Authorization: auth_header,
+      'Content-Type': contentType || 'application/json'
+    };
+  };
+
   // Todas las llamadas pasan por aquí
   static xhr = async function(route, params, verb) {
     const host = 'https://cytio.com.mx/api/admin';
