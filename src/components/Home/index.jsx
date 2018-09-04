@@ -9,7 +9,17 @@ class Home extends Component {
           <h2>Cytio admin</h2>
         </header>
         <section>
-          <Link to="/users">Users</Link>
+          <ul>
+            <li>
+              <Link to="/users">Usuarios</Link>
+            </li>
+            <li>
+              <Link to="/drivers">Taxistas</Link>
+            </li>
+            <li>
+              <Link to="/organizations">Sitios</Link>
+            </li>
+          </ul>
         </section>
       </div>
     )
