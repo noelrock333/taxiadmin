@@ -19,6 +19,12 @@ class Home extends Component {
             <li>
               <Link to="/organizations">Sitios</Link>
             </li>
+            <li>
+              <Link to="/services">Tipos de servicio</Link>
+            </li>
+            <li>
+              <Link to="/trips">Servicios activos</Link>
+            </li>
           </ul>
         </section>
       </div>

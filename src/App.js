@@ -9,6 +9,8 @@ import UserEdit from './components/UserEdit';
 import DriversList from './components/DriversList';
 import OrganizationsList from './components/OrganizationsList';
 import OrganizationEdit from './components/OrganizationEdit';
+import ServicesList from './components/ServicesList';
+import TripsList from './components/TripsList';
 
 class App extends Component {
   render() {
@@ -25,6 +27,8 @@ class App extends Component {
               <Route path="/drivers" component={DriversList}/>
               <Route path="/organizations" component={OrganizationsList}/>
               <Route path="/organization/:id/edit" component={OrganizationEdit} />
+              <Route path="/services" component={ServicesList}/>
+              <Route path="/trips" component={TripsList}/>
             </div>
           </Router>
         </div>
