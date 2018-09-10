@@ -5,37 +5,35 @@ import Item from './Item';
 import AlertMessage from '../../sharedComponents/AlertMessage';
 import { Pagination, PaginationItem, PaginationLink } from 'reactstrap';
 
-export default class UsersList extends Component {
+export default class TripsList extends Component {
 
   state = {
-    users: [],
+    trips: [],
     errors: null,
     flash: null,
-    selectedPage: 1
+    selectedPage: 1,
+    status: 'holding'
   }
 
   componentDidMount() {
     const flash = this.props.location.flash;
     if (flash) this.setState({flash});
-    Api.get('/users')
+    Api.get(`/trips?status=${this.state.status}`)
       .then(res => {
-        const {users, pageCount} = res.data;
+        const {trips, pageCount} = res.data;
         this.setState({
-          users,
-          pageCount: res.data.pageCount
+          trips,
+          pageCount
         })
-      })
-      .catch(err => {
-        console.log(err.response.data)
       });
   }
 
-  deleteItem = (user_id) => {
-    Api.delete(`/user/${user_id}`)
+  deleteItem = (trip_id) => {
+    Api.delete(`/trip/${trip_id}`)
       .then(res => {
-        const users = this.state.users.filter((user) => user.id !== user_id)
+        const trips = this.state.trips.filter((trip) => trip.id !== trip_id)
         this.setState({
-          users,
+          trips,
           flash: {
             type: "success",
             message: res.data.flash[0]
@@ -52,11 +50,11 @@ export default class UsersList extends Component {
   nextItem = () => {
     const {selectedPage, pageCount} = this.state;
     if (selectedPage < pageCount){
-      Api.get(`/users?page=${selectedPage + 1}`)
+      Api.get(`/trips?page=${selectedPage + 1}&status=${this.state.status}`)
         .then(res => {
-          const {users, pageCount} = res.data;
+          const {trips, pageCount} = res.data;
           this.setState({
-            users,
+            trips,
             selectedPage: selectedPage + 1,
             pageCount
           })
@@ -67,11 +65,11 @@ export default class UsersList extends Component {
   previousItem = () => {
     const {selectedPage} = this.state;
     if (selectedPage > 1){
-      Api.get(`/users?page=${selectedPage - 1}`)
+      Api.get(`/trips?page=${selectedPage - 1}&status=${this.state.status}`)
         .then(res => {
-          const {users, pageCount} = res.data;
+          const {trips, pageCount} = res.data;
           this.setState({
-            users,
+            trips,
             selectedPage: selectedPage - 1,
             pageCount
           })
@@ -80,24 +78,48 @@ export default class UsersList extends Component {
   }
 
   getPage = event => {
-    const page = parseInt(event.target.dataset.page);
-    Api.get(`/users?page=${page}`)
+    let page = 1;
+    if (typeof event === 'number') {
+      page = event;
+    } else {
+      page = parseInt(event.target.dataset.page);
+    }
+    Api.get(`/trips?page=${page}&status=${this.state.status}`)
       .then(res => {
-        const {users, pageCount} = res.data;
+        const {trips, pageCount} = res.data;
         this.setState({
-          users,
+          trips,
           selectedPage: page,
           pageCount
         })
       });
   }
 
-  render(){
-    const {users, errors, flash, pageCount, selectedPage} = this.state;
+  onStatusChange = (ev) => {
+    this.setState({
+      status: ev.target.value,
+      selectedPage: 1,
+      errors: null,
+      flash: null
+    }, () => {
+      this.getPage(1)
+    })
+  }
 
+  render(){
+    const {trips, errors, flash, pageCount, selectedPage, status} = this.state;
     return(
       <div>
-        <h2>Usuarios</h2>
+        <h2>Servicios activos</h2>
+        <div>
+          <select name="" id="" onChange={this.onStatusChange} value={status}>
+            <option value="holding">En espera</option>
+            <option value="finished">Finalizados</option>
+            {/*<option value="taken">Tomado</option>*/}
+            <option value="active">Activo/Tomado</option>
+            <option value="canceled">Cancelado</option>
+          </select>
+        </div>
         {errors && <AlertMessage message={alert.message}/>}
         {flash && <AlertMessage alertType={flash.type} message={flash.message}/>}
         <div>
@@ -105,15 +127,18 @@ export default class UsersList extends Component {
             <thead>
               <tr>
                 <th>#</th>
-                <th>Nombre completo</th>
-                <th>Email</th>
-                <th>Opciones</th>
+                <th>Status</th>
+                <th>Usuario</th>
+                <th>Chofer</th>
+                <th>Direccion</th>
+                <th>Fecha</th>
+                <th>Tiempo</th>
               </tr>
             </thead>
             <tbody>
               {
-                users.map((user) => {
-                  return <Item key={user.id} user={user} deleteItem={this.deleteItem}/>
+                trips.map((trip) => {
+                  return <Item key={trip.id} trip={trip} deleteItem={this.deleteItem}/>
                 })
               }
             </tbody>

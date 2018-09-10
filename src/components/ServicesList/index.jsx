@@ -5,10 +5,10 @@ import Item from './Item';
 import AlertMessage from '../../sharedComponents/AlertMessage';
 import { Pagination, PaginationItem, PaginationLink } from 'reactstrap';
 
-export default class UsersList extends Component {
+export default class ServicesList extends Component {
 
   state = {
-    users: [],
+    services: [],
     errors: null,
     flash: null,
     selectedPage: 1
@@ -17,25 +17,22 @@ export default class UsersList extends Component {
   componentDidMount() {
     const flash = this.props.location.flash;
     if (flash) this.setState({flash});
-    Api.get('/users')
+    Api.get('/services')
       .then(res => {
-        const {users, pageCount} = res.data;
+        const {services, pageCount} = res.data;
         this.setState({
-          users,
-          pageCount: res.data.pageCount
+          services,
+          pageCount
         })
-      })
-      .catch(err => {
-        console.log(err.response.data)
       });
   }
 
-  deleteItem = (user_id) => {
-    Api.delete(`/user/${user_id}`)
+  deleteItem = (service_id) => {
+    Api.delete(`/service/${service_id}`)
       .then(res => {
-        const users = this.state.users.filter((user) => user.id !== user_id)
+        const services = this.state.services.filter((service) => service.id !== service_id)
         this.setState({
-          users,
+          services,
           flash: {
             type: "success",
             message: res.data.flash[0]
@@ -52,11 +49,11 @@ export default class UsersList extends Component {
   nextItem = () => {
     const {selectedPage, pageCount} = this.state;
     if (selectedPage < pageCount){
-      Api.get(`/users?page=${selectedPage + 1}`)
+      Api.get(`/services?page=${selectedPage + 1}`)
         .then(res => {
-          const {users, pageCount} = res.data;
+          const {services, pageCount} = res.data;
           this.setState({
-            users,
+            services,
             selectedPage: selectedPage + 1,
             pageCount
           })
@@ -67,11 +64,11 @@ export default class UsersList extends Component {
   previousItem = () => {
     const {selectedPage} = this.state;
     if (selectedPage > 1){
-      Api.get(`/users?page=${selectedPage - 1}`)
+      Api.get(`/services?page=${selectedPage - 1}`)
         .then(res => {
-          const {users, pageCount} = res.data;
+          const {services, pageCount} = res.data;
           this.setState({
-            users,
+            services,
             selectedPage: selectedPage - 1,
             pageCount
           })
@@ -81,11 +78,11 @@ export default class UsersList extends Component {
 
   getPage = event => {
     const page = parseInt(event.target.dataset.page);
-    Api.get(`/users?page=${page}`)
+    Api.get(`/services?page=${page}`)
       .then(res => {
-        const {users, pageCount} = res.data;
+        const {services, pageCount} = res.data;
         this.setState({
-          users,
+          services,
           selectedPage: page,
           pageCount
         })
@@ -93,11 +90,10 @@ export default class UsersList extends Component {
   }
 
   render(){
-    const {users, errors, flash, pageCount, selectedPage} = this.state;
-
+    const {services, errors, flash, pageCount, selectedPage} = this.state;
     return(
       <div>
-        <h2>Usuarios</h2>
+        <h2>Taxistas</h2>
         {errors && <AlertMessage message={alert.message}/>}
         {flash && <AlertMessage alertType={flash.type} message={flash.message}/>}
         <div>
@@ -105,15 +101,14 @@ export default class UsersList extends Component {
             <thead>
               <tr>
                 <th>#</th>
-                <th>Nombre completo</th>
-                <th>Email</th>
-                <th>Opciones</th>
+                <th>Tipo</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
               {
-                users.map((user) => {
-                  return <Item key={user.id} user={user} deleteItem={this.deleteItem}/>
+                services.map((service) => {
+                  return <Item key={service.id} service={service} deleteItem={this.deleteItem}/>
                 })
               }
             </tbody>
