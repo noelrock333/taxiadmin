@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import { Table } from 'reactstrap';
 import Api from '../../utils/api';
+import { init, instance } from '../../firebase'
 import Item from './Item';
 import AlertMessage from '../../sharedComponents/AlertMessage';
 import { Pagination, PaginationItem, PaginationLink } from 'reactstrap';
@@ -12,20 +13,37 @@ export default class TripsList extends Component {
     errors: null,
     flash: null,
     selectedPage: 1,
-    status: 'holding'
+    status: 'holding',
+    pageCount: 0
   }
 
   componentDidMount() {
     const flash = this.props.location.flash;
     if (flash) this.setState({flash});
-    Api.get(`/trips?status=${this.state.status}`)
-      .then(res => {
-        const {trips, pageCount} = res.data;
-        this.setState({
-          trips,
-          pageCount
-        })
-      });
+    this.getHoldingTrips();
+    // Api.get(`/trips?status=${this.state.status}`)
+    //   .then(res => {
+    //     const {trips, pageCount} = res.data;
+    //     this.setState({
+    //       trips,
+    //       pageCount
+    //     })
+    //   });
+  }
+
+  getHoldingTrips = () => {
+    instance()
+      .database()
+      .ref(`server/holding_trips/`)
+      .on('value', snapshot => {
+        console.log(snapshot.val())
+        const trips = snapshot.val()
+        if (trips && this.state.status === 'holding') {
+          this.setState({ trips: Object.values(trips) })
+        } else {
+          this.setState({ trips: [], pageCount: 0 })
+        }
+      })
   }
 
   deleteItem = (trip_id) => {
@@ -102,7 +120,11 @@ export default class TripsList extends Component {
       errors: null,
       flash: null
     }, () => {
-      this.getPage(1)
+      if (this.state.status === 'holding') {
+        this.getHoldingTrips();
+      } else {
+        this.getPage(1)
+      }
     })
   }
 
