@@ -107,6 +107,7 @@ export default class UsersList extends Component {
                 <th>#</th>
                 <th>Nombre completo</th>
                 <th>Email</th>
+                <th>Telefono</th>
                 <th>Opciones</th>
               </tr>
             </thead>
