@@ -5,6 +5,8 @@ import { init, instance } from '../../firebase'
 import Item from './Item';
 import AlertMessage from '../../sharedComponents/AlertMessage';
 import { Pagination, PaginationItem, PaginationLink } from 'reactstrap';
+import moment from 'moment';
+var times = [];
 
 export default class TripsList extends Component {
 
@@ -15,6 +17,10 @@ export default class TripsList extends Component {
     selectedPage: 1,
     status: 'holding',
     pageCount: 0
+  }
+
+  logTimes = () => {
+    console.log(times)
   }
 
   componentDidMount() {
@@ -141,6 +147,9 @@ export default class TripsList extends Component {
             <option value="active">Activo/Tomado</option>
             <option value="canceled">Cancelado</option>
           </select>
+          <button onClick={this.logTimes}>
+            Log tiempos
+          </button>
         </div>
         {errors && <AlertMessage message={alert.message}/>}
         {flash && <AlertMessage alertType={flash.type} message={flash.message}/>}
@@ -162,6 +171,8 @@ export default class TripsList extends Component {
             <tbody>
               {
                 trips.map((trip) => {
+                  var difference = moment(trip.updated_at).diff(moment(trip.created_at), 'seconds') / 60;
+                  times.push(difference.toFixed(2));
                   return <Item key={trip.id} trip={trip} deleteItem={this.deleteItem}/>
                 })
               }
