@@ -155,6 +155,8 @@ export default class TripsList extends Component {
                 <th>Direccion</th>
                 <th>Fecha</th>
                 <th>Tiempo</th>
+                <th>Lapso</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
