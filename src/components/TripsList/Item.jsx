@@ -4,6 +4,7 @@ import moment from 'moment';
 
 const TripItemTable = ({trip, deleteItem}) => {
   const { id, address_origin, status, user_id, created_at, updated_at, user, driver } = trip;
+  const difference = moment(updated_at).diff(moment(created_at), 'seconds') / 60;
   return(
     <tr>
       <th scope="row">{id}</th>
@@ -13,7 +14,7 @@ const TripItemTable = ({trip, deleteItem}) => {
       <td>{address_origin}</td>
       <td>{moment(created_at).format('MMMM Do YYYY, h:mm:ss a')}</td>
       <td>{moment(created_at).fromNow()}</td>
-      <td>{moment(updated_at).diff(moment(created_at), 'minutes')}</td>
+      <td>{difference.toFixed(2)}</td>
       <td>
         <ItemOptions trip_id={id} deleteItem={deleteItem} />
       </td>
