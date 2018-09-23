@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Button } from 'reactstrap'
 
 const ItemOptions = ({driver_id, deleteItem}) => {
-  const path = `/user/${driver_id}`;
+  const path = `/driver/${driver_id}`;
   const edit_path = `${path}/edit`;
   const confirmDelete = () => {
     var opcion = window.confirm("Eliminar?");
@@ -13,6 +13,7 @@ const ItemOptions = ({driver_id, deleteItem}) => {
   } 
   return(
     <div>
+      <Link to={edit_path}> Edit </Link>
       <Button color="link" onClick={() => confirmDelete()}>Delete</Button>
     </div>
   )

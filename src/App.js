@@ -8,6 +8,7 @@ import UsersList from './components/UsersList';
 import UserProfile from './components/UserProfile';
 import UserEdit from './components/UserEdit';
 import DriversList from './components/DriversList';
+import DriverEdit from './components/DriverEdit';
 import OrganizationsList from './components/OrganizationsList';
 import OrganizationEdit from './components/OrganizationEdit';
 import ServicesList from './components/ServicesList';
@@ -26,6 +27,7 @@ class App extends Component {
               <Route exact path="/user/:id" component={UserProfile} />
               <Route path="/user/:id/edit" component={UserEdit} />
               <Route path="/drivers" component={DriversList}/>
+              <Route path="/driver/:id/edit" component={DriverEdit} />
               <Route path="/organizations" component={OrganizationsList}/>
               <Route path="/organization/:id/edit" component={OrganizationEdit} />
               <Route path="/services" component={ServicesList}/>

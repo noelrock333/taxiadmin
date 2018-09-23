@@ -124,7 +124,7 @@ export default class DriversList extends Component {
             {
               new Array(pageCount).fill(0).map((val, index) => {
                 return(
-                  <PaginationItem active={index + 1 === selectedPage}>
+                  <PaginationItem key={index} active={index + 1 === selectedPage}>
                     <PaginationLink data-page={index + 1} onClick={this.getPage}>
                       {index + 1}
                     </PaginationLink>
