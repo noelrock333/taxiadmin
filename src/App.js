@@ -12,27 +12,29 @@ import OrganizationsList from './components/OrganizationsList';
 import OrganizationEdit from './components/OrganizationEdit';
 import ServicesList from './components/ServicesList';
 import TripsList from './components/TripsList';
+import Footer from './sharedComponents/Footer'
 
 class App extends Component {
   render() {
     return (
-      <div>
-        <NavigationBar/>
-        <div className="container">
-          <Router>
-            <div>
-              <Route exact path="/" component={Home}/>
-              <Route path="/users" component={UsersList}/>
-              <Route exact path="/user/:id" component={UserProfile} />
-              <Route path="/user/:id/edit" component={UserEdit} />
-              <Route path="/drivers" component={DriversList}/>
-              <Route path="/organizations" component={OrganizationsList}/>
-              <Route path="/organization/:id/edit" component={OrganizationEdit} />
-              <Route path="/services" component={ServicesList}/>
-              <Route path="/trips" component={TripsList}/>
+      <div className="site">
+          <NavigationBar/>
+            <div className="container content">
+              <Router>
+                <div>
+                  <Route exact path="/" component={Home}/>
+                  <Route path="/users" component={UsersList}/>
+                  <Route exact path="/user/:id" component={UserProfile} />
+                  <Route path="/user/:id/edit" component={UserEdit} />
+                  <Route path="/drivers" component={DriversList}/>
+                  <Route path="/organizations" component={OrganizationsList}/>
+                  <Route path="/organization/:id/edit" component={OrganizationEdit} />
+                  <Route path="/services" component={ServicesList}/>
+                  <Route path="/trips" component={TripsList}/>
+                </div>
+              </Router>
             </div>
-          </Router>
-        </div>
+          <Footer/>
       </div>
     );
   }
