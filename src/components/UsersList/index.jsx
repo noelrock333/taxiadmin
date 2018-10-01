@@ -1,9 +1,12 @@
 import React, {Component} from 'react';
-import { Table } from 'reactstrap';
 import Api from '../../utils/api';
 import Item from './Item';
 import AlertMessage from '../../sharedComponents/AlertMessage';
-import { Pagination, PaginationItem, PaginationLink } from 'reactstrap';
+import ReactTable from 'react-table';
+import 'react-table/react-table.css'
+import './UsersList.css'
+import matchSorter from 'match-sorter'
+import _ from 'lodash'
 
 export default class UsersList extends Component {
 
@@ -30,10 +33,11 @@ export default class UsersList extends Component {
       });
   }
 
-  deleteItem = (user_id) => {
-    Api.delete(`/user/${user_id}`)
+  deleteUser = (item) => {
+    console.log(item)
+    Api.delete(`/user/${item.id}`)
       .then(res => {
-        const users = this.state.users.filter((user) => user.id !== user_id)
+        const users = this.state.users.filter((user) => user.id !== item.id)
         this.setState({
           users,
           flash: {
@@ -47,99 +51,71 @@ export default class UsersList extends Component {
           errors: { message: err.response.data.errors[0] }
         })
       });
-  }
+  } 
 
-  nextItem = () => {
-    const {selectedPage, pageCount} = this.state;
-    if (selectedPage < pageCount){
-      Api.get(`/users?page=${selectedPage + 1}`)
-        .then(res => {
-          const {users, pageCount} = res.data;
-          this.setState({
-            users,
-            selectedPage: selectedPage + 1,
-            pageCount
-          })
-        });
-    }
-  }
-
-  previousItem = () => {
-    const {selectedPage} = this.state;
-    if (selectedPage > 1){
-      Api.get(`/users?page=${selectedPage - 1}`)
-        .then(res => {
-          const {users, pageCount} = res.data;
-          this.setState({
-            users,
-            selectedPage: selectedPage - 1,
-            pageCount
-          })
-        });
-    }
-  }
-
-  getPage = event => {
-    const page = parseInt(event.target.dataset.page);
-    Api.get(`/users?page=${page}`)
-      .then(res => {
-        const {users, pageCount} = res.data;
-        this.setState({
-          users,
-          selectedPage: page,
-          pageCount
-        })
-      });
+  editUser = (item) => {
+    const path = `/user/${item.id}`;
+    const edit_path = `${path}/edit`;
+    this.props.history.push(edit_path)
   }
 
   render(){
-    const {users, errors, flash, pageCount, selectedPage} = this.state;
+    const data = [];
+
+    this.state.users.forEach(element => {
+      const newUsr = {}
+      newUsr.id = element.id
+      newUsr.name = element.full_name 
+      newUsr.email = element.email
+      newUsr.tel = element.phone_number
+      data.push(newUsr)
+    });
+
+    const columns = [{
+        Header: 'Nombre Completo',
+        accessor: 'name',
+        // filterMethod: (filter, row) =>
+        //   row[filter.id].startsWith(filter.value) &&
+        //   row[filter.id].endsWith(filter.value)
+          // co
+          // // var newRows = Object.keys(rows).map(function(key) {
+          // //   return {type: key, name: rows[key]};
+          // // });
+          // console.log(rows)
+          // // console.log('Filter', filter)
+          // // console.log('Row', this.rows)
+          // // _.find()
+          // // console.log(filter)
+          // // console.log(rows)
+          // // console.log(newRows)
+          // matchSorter(rowsArr, filter.value, { keys: ["name"] })
+        // }
+      }, {
+        Header: 'Email',
+        accessor: 'email',
+      }, {
+        Header: 'Telefono',
+        accessor: 'tel'
+      }, {
+      Header: '',
+       Cell: row => (
+           <div>
+              <button className="userListButtons"><img src={require('../../images/pencil.png')} className="iconsUserList" onClick={() =>  this.editUser(row.original)}/></button>
+              <button className="userListButtons"><img src={require('../../images/trash.png')} className="iconsUserList" onClick={() => this.deleteUser(row.original)}/></button>
+           </div>
+       )
+      }
+    ]
 
     return(
-      <div>
-        <h2>Usuarios</h2>
-        {errors && <AlertMessage message={alert.message}/>}
-        {flash && <AlertMessage alertType={flash.type} message={flash.message}/>}
-        <div>
-          <Table striped>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Nombre completo</th>
-                <th>Email</th>
-                <th>Telefono</th>
-                <th>Opciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {
-                users.map((user) => {
-                  return <Item key={user.id} user={user} deleteItem={this.deleteItem}/>
-                })
-              }
-            </tbody>
-          </Table>
-          <Pagination className="pagination" >
-            <PaginationItem>
-              <PaginationLink previous onClick={this.previousItem}/>
-            </PaginationItem>
-            {
-              new Array(pageCount).fill(0).map((val, index) => {
-                return(
-                  <PaginationItem key={index} active={index + 1 === selectedPage}>
-                    <PaginationLink data-page={index + 1} onClick={this.getPage}>
-                      {index + 1}
-                    </PaginationLink>
-                  </PaginationItem>
-                )
-              })
-            }
-            <PaginationItem>
-              <PaginationLink next onClick={this.nextItem}/>
-            </PaginationItem>
-          </Pagination>
-        </div>
-      </div>
+      <ReactTable
+        filterable
+        defaultFilterMethod={(filter, row) =>
+          String(row[filter.id]) === filter.value}
+        defaultPageSize={10}
+        data={data}
+        columns={columns}
+      />
     )
   }
 }
