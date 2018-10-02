@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from 'reactstrap'
 
-const ItemOptions = ({driver_id, deleteItem}) => {
+const ItemOptions = ({driver_id, active, toggleActivation, deleteItem}) => {
   const path = `/user/${driver_id}`;
   const edit_path = `${path}/edit`;
   const confirmDelete = () => {
@@ -13,7 +13,10 @@ const ItemOptions = ({driver_id, deleteItem}) => {
   } 
   return(
     <div>
-      <Button color="link" onClick={() => confirmDelete()}>Delete</Button>
+      <Button color="link" onClick={() => toggleActivation(driver_id)}>
+        {active ? 'Desactivar' : 'Activar'}
+      </Button>
+      <Button color="link" onClick={confirmDelete}>Eliminar</Button>
     </div>
   )
 }
