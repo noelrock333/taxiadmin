@@ -1,11 +1,8 @@
 import React, {Component} from 'react';
 import Api from '../../utils/api';
-import Item from './Item';
-import AlertMessage from '../../sharedComponents/AlertMessage';
 import ReactTable from 'react-table';
 import 'react-table/react-table.css'
 import './UsersList.css'
-import matchSorter from 'match-sorter'
 import _ from 'lodash'
 
 export default class UsersList extends Component {
