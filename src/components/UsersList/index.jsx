@@ -23,7 +23,9 @@ export default class UsersList extends Component {
       Api.get(`/users-search/${val}`)
       .then(({data}) => {
         this.setState({
+          users: data
         })
+        console.log(data)
       }).catch((err) => {
          console.log(err)
         this.setState({
