@@ -44,10 +44,12 @@ export default class UsersList extends Component {
         this.setState({
           users: res.data.users,
         })
-        console.log(res)
       })
       .catch(err => {
         console.log(err.response.data)
+        this.setState({
+          errors: err.response.data.errors
+        })
       });
   }
 
