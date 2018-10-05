@@ -14,7 +14,6 @@ export default class UsersList extends Component {
     users: [],
     errors: null,
     flash: null,
-    selectedPage: 1,
     searchValue: ''
   }
 
@@ -25,9 +24,8 @@ export default class UsersList extends Component {
         this.setState({
           users: data
         })
-        console.log(data)
       }).catch((err) => {
-         console.log(err)
+        console.log(err)
         this.setState({
           errors: err.response.data.errors
         })
@@ -46,11 +44,10 @@ export default class UsersList extends Component {
   fetchUsers() {
     Api.get('/users')
       .then(res => {
-        const {users, pageCount} = res.data;
         this.setState({
-          users,
-          pageCount: res.data.pageCount
+          users: res.data.users,
         })
+        console.log(res)
       })
       .catch(err => {
         console.log(err.response.data)
