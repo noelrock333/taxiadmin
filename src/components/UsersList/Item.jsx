@@ -15,3 +15,4 @@ const UserItemTable = ({user, deleteItem}) => {
 }
 
 export default UserItemTable;
+//No longer needed

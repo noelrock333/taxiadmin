@@ -9,17 +9,39 @@ import matchSorter from 'match-sorter'
 import _ from 'lodash'
 
 export default class UsersList extends Component {
-
+  //The code here is incomplete. It works, but its buggy and needs refactorization here and there. Working on it. Pushed it for reviews and comments.
   state = {
     users: [],
     errors: null,
     flash: null,
-    selectedPage: 1
+    selectedPage: 1,
+    searchValue: ''
   }
 
-  componentDidMount() {
-    const flash = this.props.location.flash;
-    if (flash) this.setState({flash});
+  updateSearch = (val) => {
+    if(val) {
+      Api.get(`/users-search/${val}`)
+      .then(({data}) => {
+        this.setState({
+        })
+      }).catch((err) => {
+         console.log(err)
+        this.setState({
+          errors: err.response.data.errors
+        })
+      })
+    }
+    this.fetchUsers()
+  }
+
+  updateInputValue(evt) {
+    this.setState({
+      searchValue: evt.target.value
+    })
+    this.updateSearch(this.state.searchValue)  
+  }
+
+  fetchUsers() {
     Api.get('/users')
       .then(res => {
         const {users, pageCount} = res.data;
@@ -33,8 +55,13 @@ export default class UsersList extends Component {
       });
   }
 
+  componentDidMount() {
+    const flash = this.props.location.flash;
+    if (flash) this.setState({flash});
+    this.fetchUsers()
+  }
+
   deleteUser = (item) => {
-    console.log(item)
     Api.delete(`/user/${item.id}`)
       .then(res => {
         const users = this.state.users.filter((user) => user.id !== item.id)
@@ -74,22 +101,6 @@ export default class UsersList extends Component {
     const columns = [{
         Header: 'Nombre Completo',
         accessor: 'name',
-        // filterMethod: (filter, row) =>
-        //   row[filter.id].startsWith(filter.value) &&
-        //   row[filter.id].endsWith(filter.value)
-          // co
-          // // var newRows = Object.keys(rows).map(function(key) {
-          // //   return {type: key, name: rows[key]};
-          // // });
-          // console.log(rows)
-          // // console.log('Filter', filter)
-          // // console.log('Row', this.rows)
-          // // _.find()
-          // // console.log(filter)
-          // // console.log(rows)
-          // // console.log(newRows)
-          // matchSorter(rowsArr, filter.value, { keys: ["name"] })
-        // }
       }, {
         Header: 'Email',
         accessor: 'email',
@@ -108,14 +119,16 @@ export default class UsersList extends Component {
     ]
 
     return(
-      <ReactTable
-        filterable
-        defaultFilterMethod={(filter, row) =>
-          String(row[filter.id]) === filter.value}
-        defaultPageSize={10}
-        data={data}
-        columns={columns}
-      />
+      <div>
+        <div>
+          <input type="text" placeholder="Buscar..."  value={this.state.searchValue} onChange={evt => this.updateInputValue(evt)} ></input>
+        </div>
+        <ReactTable
+          defaultPageSize={10}
+          data={data}
+          columns={columns}
+        />
+      </div>
     )
   }
 }
