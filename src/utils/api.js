@@ -19,7 +19,7 @@ class Api {
 
   // Todas las llamadas pasan por aquí
   static xhr = async function(route, params, verb) {
-    const host = 'http://localhost:3001/api/admin';
+    const host = `${process.env.REACT_APP_BASE_URL}/api/admin`;
     const url = `${host}${route}`;
     const headers = await this.headers();
     const options = {

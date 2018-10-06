@@ -6,57 +6,72 @@ import './UsersList.css'
 import _ from 'lodash'
 
 export default class UsersList extends Component {
-  //The code here is incomplete. It works, but its buggy and needs refactorization here and there. Working on it. Pushed it for reviews and comments.
-  state = {
-    users: [],
-    errors: null,
-    flash: null,
-    searchValue: ''
-  }
-
-  updateSearch = (val) => {
-    if(val) {
-      Api.get(`/users-search/${val}`)
-      .then(({data}) => {
-        this.setState({
-          users: data
-        })
-      }).catch((err) => {
-        console.log(err)
-        this.setState({
-          errors: err.response.data.errors
-        })
-      })
+  //The code here is more complete than incomplete. It works and needs refactorization here and there. Working on it. Pushed it for reviews and comments.
+  constructor () {
+    super()
+    this.state = { 
+      users: [],
+      errors: null,
+      flash: null,
+      searchValue: '',
+      userList: []
     }
-    this.fetchUsers()
-  }
-
-  updateInputValue(evt) {
-    this.setState({
-      searchValue: evt.target.value
-    })
-    this.updateSearch(this.state.searchValue)  
-  }
-
-  fetchUsers() {
-    Api.get('/users')
-      .then(res => {
-        this.setState({
-          users: res.data.users,
-        })
-      })
-      .catch(err => {
-        console.log(err.response.data)
-        this.setState({
-          errors: err.response.data.errors
-        })
-      });
   }
 
   componentDidMount() {
     const flash = this.props.location.flash;
     if (flash) this.setState({flash});
     this.fetchUsers()
+  }
+
+  fetchUsers () {
+    Api.get('/users')
+      .then(res => {
+        this.setState({
+          users: res.data.users,
+        }, () => {
+          this.formatUsersForTable(this.state.users)
+        })
+      })
+      .catch(err => {
+        this.setState({
+          errors: err.response.data.errors
+        })
+      });
+  }
+
+  matchUsers = (value) => {
+    if(value.length !== 0 && value !== ' ') {
+      this.setState({
+        searchValue: value
+      }, () => {
+        var valueToMatch = this.state.searchValue
+        Api.get(`/users-search/${this.state.searchValue}`)
+          .then(({data}) => {
+            this.setState({
+              users: data
+            }, () => {
+              this.formatUsersForTable(this.state.users)
+            })
+          }).catch((err) => {
+            this.setState({
+              errors: err.response.data.errors
+            })
+          })
+      })
+    } else {
+      this.setState({
+        searchValue: ''
+      }, () => {
+        this.fetchUsers()
+      })
+    } 
+  }
+
+  editUser = (item) => {
+    const path = `/user/${item.id}`
+    const edit_path = `${path}/edit`
+    this.props.history.push(edit_path)
   }
 
   deleteUser = (item) => {
@@ -76,26 +91,24 @@ export default class UsersList extends Component {
           errors: { message: err.response.data.errors[0] }
         })
       });
-  } 
-
-  editUser = (item) => {
-    const path = `/user/${item.id}`;
-    const edit_path = `${path}/edit`;
-    this.props.history.push(edit_path)
+  }
+  
+  formatUsersForTable = (users) => {
+    const data = []
+    users.forEach((user) => {
+      const newUsr = {}
+      newUsr.id = user.id
+      newUsr.name = user.full_name 
+      newUsr.email = user.email
+      newUsr.tel = user.phone_number
+      data.push(newUsr)
+    })
+    this.setState({
+      userList: data
+    })
   }
 
   render(){
-    const data = [];
-
-    this.state.users.forEach(element => {
-      const newUsr = {}
-      newUsr.id = element.id
-      newUsr.name = element.full_name 
-      newUsr.email = element.email
-      newUsr.tel = element.phone_number
-      data.push(newUsr)
-    });
-
     const columns = [{
         Header: 'Nombre Completo',
         accessor: 'name',
@@ -119,11 +132,11 @@ export default class UsersList extends Component {
     return(
       <div>
         <div>
-          <input type="text" placeholder="Buscar..."  value={this.state.searchValue} onChange={evt => this.updateInputValue(evt)} ></input>
+          <input type="text" placeholder="Buscar..."  value={this.state.searchValue} onChange={evt => this.matchUsers(evt.target.value)} ></input>
         </div>
         <ReactTable
           defaultPageSize={10}
-          data={data}
+          data={this.state.userList}
           columns={columns}
         />
       </div>
