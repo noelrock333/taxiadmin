@@ -6,7 +6,6 @@ import './UsersList.css'
 import _ from 'lodash'
 
 export default class UsersList extends Component {
-  //The code here is more complete than incomplete. It works and needs refactorization here and there. Working on it. Pushed it for reviews and comments.
   constructor () {
     super()
     this.state = { 
@@ -19,8 +18,8 @@ export default class UsersList extends Component {
   }
 
   componentDidMount() {
-    const flash = this.props.location.flash;
-    if (flash) this.setState({flash});
+    const flash = this.props.location.flash
+    if (flash) this.setState({flash})
     this.fetchUsers()
   }
 
@@ -94,14 +93,14 @@ export default class UsersList extends Component {
   }
   
   formatUsersForTable = (users) => {
-    const data = []
-    users.forEach((user) => {
+    var data = [];
+    data = users.map(user => {
       const newUsr = {}
       newUsr.id = user.id
-      newUsr.name = user.full_name 
+      newUsr.name = user.full_name
       newUsr.email = user.email
       newUsr.tel = user.phone_number
-      data.push(newUsr)
+      return newUsr
     })
     this.setState({
       userList: data
