@@ -46,6 +46,27 @@ export default class DriversList extends Component {
       });
   }
 
+  toggleActivation = (driver_id) => {
+    Api.put(`/driver/${driver_id}/activate`)
+      .then(res => {
+        let drivers = this.state.drivers.map((driver) => {
+          if (driver.id === driver_id) {
+            return {...driver, active: res.data.active};
+          } else {
+            return driver;
+          }
+        });
+        this.setState({
+          drivers
+        })
+      })
+      .catch((err) => {
+        this.setState({
+          errors: { message: err.response.data.errors[0] }
+        })
+      });
+  }   
+
   nextItem = () => {
     const {selectedPage, pageCount} = this.state;
     if (selectedPage < pageCount){
@@ -107,12 +128,13 @@ export default class DriversList extends Component {
                 <th>Email</th>
                 <th>Telefono</th>
                 <th>Gafete</th>
+                <th>Opciones</th>
               </tr>
             </thead>
             <tbody>
               {
                 drivers.map((driver) => {
-                  return <Item key={driver.id} driver={driver} deleteItem={this.deleteItem}/>
+                  return <Item key={driver.id} driver={driver} deleteItem={this.deleteItem} toggleActivation={this.toggleActivation}/>
                 })
               }
             </tbody>
@@ -124,7 +146,7 @@ export default class DriversList extends Component {
             {
               new Array(pageCount).fill(0).map((val, index) => {
                 return(
-                  <PaginationItem active={index + 1 === selectedPage}>
+                  <PaginationItem key={index} active={index + 1 === selectedPage}>
                     <PaginationLink data-page={index + 1} onClick={this.getPage}>
                       {index + 1}
                     </PaginationLink>

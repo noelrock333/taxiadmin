@@ -1,32 +1,18 @@
 import React, {Component} from 'react';
 import { Link } from 'react-router-dom';
+import { ListGroup, ListGroupItem } from 'reactstrap';
 
 class Home extends Component {
   render(){
     return(
       <div>
-        <header>
-          <h2>Cytio admin</h2>
-        </header>
-        <section>
-          <ul>
-            <li>
-              <Link to="/users">Usuarios</Link>
-            </li>
-            <li>
-              <Link to="/drivers">Taxistas</Link>
-            </li>
-            <li>
-              <Link to="/organizations">Sitios</Link>
-            </li>
-            <li>
-              <Link to="/services">Tipos de servicio</Link>
-            </li>
-            <li>
-              <Link to="/trips">Servicios activos</Link>
-            </li>
-          </ul>
-        </section>
+        <ListGroup style={{marginTop: '15px'}}>
+          <ListGroupItem tag="a" href="/users">Usuarios</ListGroupItem>
+          <ListGroupItem tag="a" href="/drivers">Taxistas</ListGroupItem>
+          <ListGroupItem tag="a" href="/organizations">Sitios</ListGroupItem>
+          <ListGroupItem tag="a" href="/services">Tipos de Servicio</ListGroupItem>
+          <ListGroupItem tag="a" href="/trips">Servicios activos</ListGroupItem>
+        </ListGroup>
       </div>
     )
   }

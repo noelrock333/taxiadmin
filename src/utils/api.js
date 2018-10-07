@@ -8,7 +8,7 @@ class Api {
   };
 
   static headers = async function(contentType) {
-    const jwt = process.env.REACT_APP_ADMIN_TOKEN
+    const jwt = process.env.REACT_APP_ADMIN_TOKEN;
     let auth_header = 'Bearer ' + jwt;
     return {
       Authorization: auth_header,

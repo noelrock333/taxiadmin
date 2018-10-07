@@ -11,6 +11,7 @@ import {
   DropdownToggle,
   DropdownMenu,
   DropdownItem } from 'reactstrap';
+import './NavbarStyles.css';
 
 export default class NavigationBar extends Component {
   constructor(props) {
@@ -29,29 +30,8 @@ export default class NavigationBar extends Component {
 
   render(){
     return(
-      <Navbar color="light" light expand="md">
-        <NavbarBrand href="/">Cytio Admin</NavbarBrand>
-        <NavbarToggler onClick={this.toggle} />
-        <Collapse isOpen={this.state.isOpen} navbar>
-          <Nav className="ml-auto" navbar>
-            <NavItem>
-              <NavLink href="/components/">Components</NavLink>
-            </NavItem>
-            <NavItem>
-              <NavLink href="https://github.com/reactstrap/reactstrap">GitHub</NavLink>
-            </NavItem>
-            <UncontrolledDropdown nav inNavbar>
-              <DropdownToggle nav caret>
-                Options
-              </DropdownToggle>
-              <DropdownMenu right>
-                <DropdownItem>
-                  Cerrar Sesión
-                </DropdownItem>
-              </DropdownMenu>
-            </UncontrolledDropdown>
-          </Nav>
-        </Collapse>
+      <Navbar className="header" light expand="md">
+        <NavbarBrand className="appTitle" href="/">Cytio Admin</NavbarBrand>
       </Navbar>
     )
   }
