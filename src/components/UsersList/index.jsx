@@ -131,7 +131,7 @@ export default class UsersList extends Component {
     return(
       <div>
         <div>
-          <input type="text" placeholder="Buscar..."  value={this.state.searchValue} onChange={evt => this.matchUsers(evt.target.value)} ></input>
+          <input type="text" placeholder="Buscar..." className="search" value={this.state.searchValue} onChange={evt => this.matchUsers(evt.target.value)} ></input>
         </div>
         <ReactTable
           defaultPageSize={10}
