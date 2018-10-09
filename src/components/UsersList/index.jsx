@@ -3,31 +3,29 @@ import Api from '../../utils/api';
 import ReactTable from 'react-table';
 import 'react-table/react-table.css'
 import './UsersList.css'
-import _ from 'lodash'
 
 export default class UsersList extends Component {
   constructor () {
     super()
     this.state = { 
       users: [],
-      errors: null,
-      flash: null,
-      searchValue: '',
-      userList: []
+      pageZise: 0,
+      resized: [],
+      filtered: [],
+      currentPage: 0,
+      errors: null
     }
-  }
-
-  componentDidMount() {
-    const flash = this.props.location.flash
-    if (flash) this.setState({flash})
-    this.fetchUsers()
+    this.fetchUsers = this.fetchUsers.bind(this)
   }
 
   fetchUsers () {
-    Api.get('/users')
+    this.setState({ loading: true });
+    Api.get(`/users?page=${this.state.currentPage+1}`)
       .then(res => {
         this.setState({
+          pageZise: res.data.pageCount,
           users: res.data.users,
+          loading: false
         }, () => {
           this.formatUsersForTable(this.state.users)
         })
@@ -37,35 +35,7 @@ export default class UsersList extends Component {
           errors: err.response.data.errors
         })
       });
-  }
-
-  matchUsers = (value) => {
-    if(value.length !== 0 && value !== ' ') {
-      this.setState({
-        searchValue: value
-      }, () => {
-        var valueToMatch = this.state.searchValue
-        Api.get(`/users-search/${this.state.searchValue}`)
-          .then(({data}) => {
-            this.setState({
-              users: data
-            }, () => {
-              this.formatUsersForTable(this.state.users)
-            })
-          }).catch((err) => {
-            this.setState({
-              errors: err.response.data.errors
-            })
-          })
-      })
-    } else {
-      this.setState({
-        searchValue: ''
-      }, () => {
-        this.fetchUsers()
-      })
-    } 
-  }
+  } 
 
   editUser = (item) => {
     const path = `/user/${item.id}`
@@ -107,6 +77,15 @@ export default class UsersList extends Component {
     })
   }
 
+  handlePage(page) {
+    this.setState({
+      currentPage: page 
+    }, () => {
+      this.fetchUsers()
+    })
+  }
+
+
   render(){
     const columns = [{
         Header: 'Nombre Completo',
@@ -127,16 +106,20 @@ export default class UsersList extends Component {
        )
       }
     ]
-
     return(
       <div>
-        <div>
-          <input type="text" placeholder="Buscar..." className="search" value={this.state.searchValue} onChange={evt => this.matchUsers(evt.target.value)} ></input>
+        <div className="search">
+          {/* <input type="text" placeholder="No funciona de momento..." className="search" value={this.state.searchValue} onChange={evt => this.matchUsers(evt.target.value)} ></input> */}
         </div>
         <ReactTable
-          defaultPageSize={10}
+          defaultPageSize={15}
           data={this.state.userList}
           columns={columns}
+          pages={this.state.pageZise}
+          loading={this.state.loading}
+          manual
+          onPageChange={(page) => this.handlePage(page)}
+          onFetchData = {this.fetchUsers}
         />
       </div>
     )
