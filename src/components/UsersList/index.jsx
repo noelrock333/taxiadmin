@@ -13,7 +13,8 @@ export default class UsersList extends Component {
       resized: [],
       filtered: [],
       currentPage: 0,
-      errors: null
+      errors: null,
+      searchValue: ''
     }
     this.fetchUsers = this.fetchUsers.bind(this)
   }
@@ -60,6 +61,34 @@ export default class UsersList extends Component {
           errors: { message: err.response.data.errors[0] }
         })
       });
+  }
+
+  matchUsers = (value) => {
+    if(value.length !== 0 && value !== ' ') {
+      this.setState({
+        searchValue: value
+      }, () => {
+        var valueToMatch = this.state.searchValue
+        Api.get(`/users-search/?search=${this.state.searchValue}`)
+          .then(({data}) => {
+            this.setState({
+              users: data
+            }, () => {
+              this.formatUsersForTable(this.state.users)
+            })
+          }).catch((err) => {
+            this.setState({
+              errors: err.response.data.errors
+            })
+          })
+      })
+    } else {
+      this.setState({
+        searchValue: ''
+      }, () => {
+        this.fetchUsers()
+      })
+    } 
   }
   
   formatUsersForTable = (users) => {
@@ -108,8 +137,8 @@ export default class UsersList extends Component {
     ]
     return(
       <div>
-        <div className="search">
-          {/* <input type="text" placeholder="No funciona de momento..." className="search" value={this.state.searchValue} onChange={evt => this.matchUsers(evt.target.value)} ></input> */}
+        <div>
+          <input type="text" placeholder="No funciona de momento..." className="search" value={this.state.searchValue} onChange={evt => this.matchUsers(evt.target.value)} ></input>
         </div>
         <ReactTable
           defaultPageSize={15}

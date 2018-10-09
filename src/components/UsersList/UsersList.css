@@ -9,10 +9,10 @@
 }
 
 .search {
-  /* border-radius:10px;
-  border: 2px solid black; */
-  /* margin: auto auto;
-  display: flex; */
+  border-radius:10px;
+  border: 2px solid black;
+  margin: auto auto;
+  display: flex;
   margin-top: 20px;
   margin-bottom: 20px;
   width: 300px;
