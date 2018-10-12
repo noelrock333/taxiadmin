@@ -5,19 +5,27 @@ import 'react-table/react-table.css'
 import './UsersList.css'
 
 export default class UsersList extends Component {
+
   constructor () {
     super()
     this.state = { 
       users: [],
       pageZise: 0,
       resized: [],
-      filtered: [],
       currentPage: 0,
       errors: null,
-      searchValue: ''
+      searchValue: '',
+      loading: true
     }
     this.fetchUsers = this.fetchUsers.bind(this)
   }
+
+  confirmDelete = (usrId) => {
+    var opcion = window.confirm("Eliminar?");
+    if (opcion == true) {
+      this.deleteUser(usrId)
+    }
+  } 
 
   fetchUsers () {
     this.setState({ loading: true });
@@ -38,16 +46,16 @@ export default class UsersList extends Component {
       });
   } 
 
-  editUser = (item) => {
-    const path = `/user/${item.id}`
+  editUser = (usrId) => {
+    const path = `/user/${usrId}`
     const edit_path = `${path}/edit`
     this.props.history.push(edit_path)
   }
 
-  deleteUser = (item) => {
-    Api.delete(`/user/${item.id}`)
+  deleteUser = (usrId) => {
+    Api.delete(`/user/${usrId}`)
       .then(res => {
-        const users = this.state.users.filter((user) => user.id !== item.id)
+        const users = this.state.users.filter((user) => user.id !== usrId)
         this.setState({
           users,
           flash: {
@@ -129,8 +137,8 @@ export default class UsersList extends Component {
       Header: '',
        Cell: row => (
            <div>
-              <button className="userListButtons"><img src={require('../../images/pencil.png')} className="iconsUserList" onClick={() =>  this.editUser(row.original)}/></button>
-              <button className="userListButtons"><img src={require('../../images/trash.png')} className="iconsUserList" onClick={() => this.deleteUser(row.original)}/></button>
+              <button className="userListButtons"><img src={require('../../images/pencil.png')} className="iconsUserList" onClick={() =>  this.editUser(row.original.id)}/></button>
+              <button className="userListButtons"><img src={require('../../images/trash.png')} className="iconsUserList" onClick={() => this.confirmDelete(row.original.id)}/></button>
            </div>
        )
       }
