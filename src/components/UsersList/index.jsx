@@ -1,39 +1,61 @@
 import React, {Component} from 'react';
-import { Table } from 'reactstrap';
 import Api from '../../utils/api';
-import Item from './Item';
-import AlertMessage from '../../sharedComponents/AlertMessage';
-import { Pagination, PaginationItem, PaginationLink } from 'reactstrap';
+import ReactTable from 'react-table';
+import 'react-table/react-table.css'
+import './UsersList.css'
 
 export default class UsersList extends Component {
 
-  state = {
-    users: [],
-    errors: null,
-    flash: null,
-    selectedPage: 1
+  constructor () {
+    super()
+    this.state = { 
+      users: [],
+      pageZise: 0,
+      resized: [],
+      currentPage: 0,
+      errors: null,
+      searchValue: '',
+      loading: true
+    }
+    this.fetchUsers = this.fetchUsers.bind(this)
   }
 
-  componentDidMount() {
-    const flash = this.props.location.flash;
-    if (flash) this.setState({flash});
-    Api.get('/users')
+  confirmDelete = (usrId) => {
+    var opcion = window.confirm("Eliminar?");
+    if (opcion == true) {
+      this.deleteUser(usrId)
+    }
+  } 
+
+  fetchUsers () {
+    this.setState({ loading: true });
+    Api.get(`/users?page=${this.state.currentPage+1}`)
       .then(res => {
-        const {users, pageCount} = res.data;
         this.setState({
-          users,
-          pageCount: res.data.pageCount
+          pageZise: res.data.pageCount,
+          users: res.data.users,
+          loading: false
+        }, () => {
+          this.formatUsersForTable(this.state.users)
         })
       })
       .catch(err => {
-        console.log(err.response.data)
+        this.setState({
+          errors: err.response.data.errors
+        })
       });
+  } 
+
+  editUser = (usrId) => {
+    const path = `/user/${usrId}`
+    const edit_path = `${path}/edit`
+    this.props.history.push(edit_path)
   }
 
-  deleteItem = (user_id) => {
-    Api.delete(`/user/${user_id}`)
+  deleteUser = (usrId) => {
+    Api.delete(`/user/${usrId}`)
       .then(res => {
-        const users = this.state.users.filter((user) => user.id !== user_id)
+        const users = this.state.users.filter((user) => user.id !== usrId)
         this.setState({
           users,
           flash: {
@@ -49,96 +71,93 @@ export default class UsersList extends Component {
       });
   }
 
-  nextItem = () => {
-    const {selectedPage, pageCount} = this.state;
-    if (selectedPage < pageCount){
-      Api.get(`/users?page=${selectedPage + 1}`)
-        .then(res => {
-          const {users, pageCount} = res.data;
-          this.setState({
-            users,
-            selectedPage: selectedPage + 1,
-            pageCount
+  matchUsers = (value) => {
+    if(value.length !== 0 && value !== ' ') {
+      this.setState({
+        searchValue: value
+      }, () => {
+        var valueToMatch = this.state.searchValue
+        Api.get(`/users-search/?search=${this.state.searchValue}`)
+          .then(({data}) => {
+            this.setState({
+              users: data
+            }, () => {
+              this.formatUsersForTable(this.state.users)
+            })
+          }).catch((err) => {
+            this.setState({
+              errors: err.response.data.errors
+            })
           })
-        });
-    }
+      })
+    } else {
+      this.setState({
+        searchValue: ''
+      }, () => {
+        this.fetchUsers()
+      })
+    } 
+  }
+  
+  formatUsersForTable = (users) => {
+    var data = [];
+    data = users.map(user => {
+      const newUsr = {}
+      newUsr.id = user.id
+      newUsr.name = user.full_name
+      newUsr.email = user.email
+      newUsr.tel = user.phone_number
+      return newUsr
+    })
+    this.setState({
+      userList: data
+    })
   }
 
-  previousItem = () => {
-    const {selectedPage} = this.state;
-    if (selectedPage > 1){
-      Api.get(`/users?page=${selectedPage - 1}`)
-        .then(res => {
-          const {users, pageCount} = res.data;
-          this.setState({
-            users,
-            selectedPage: selectedPage - 1,
-            pageCount
-          })
-        });
-    }
+  handlePage(page) {
+    this.setState({
+      currentPage: page 
+    }, () => {
+      this.fetchUsers()
+    })
   }
 
-  getPage = event => {
-    const page = parseInt(event.target.dataset.page);
-    Api.get(`/users?page=${page}`)
-      .then(res => {
-        const {users, pageCount} = res.data;
-        this.setState({
-          users,
-          selectedPage: page,
-          pageCount
-        })
-      });
-  }
 
   render(){
-    const {users, errors, flash, pageCount, selectedPage} = this.state;
-
+    const columns = [{
+        Header: 'Nombre Completo',
+        accessor: 'name',
+      }, {
+        Header: 'Email',
+        accessor: 'email',
+      }, {
+        Header: 'Telefono',
+        accessor: 'tel'
+      }, {
+      Header: '',
+       Cell: row => (
+           <div>
+              <button className="userListButtons"><img src={require('../../images/pencil.png')} className="iconsUserList" onClick={() =>  this.editUser(row.original.id)}/></button>
+              <button className="userListButtons"><img src={require('../../images/trash.png')} className="iconsUserList" onClick={() => this.confirmDelete(row.original.id)}/></button>
+           </div>
+       )
+      }
+    ]
     return(
       <div>
-        <h2>Usuarios</h2>
-        {errors && <AlertMessage message={alert.message}/>}
-        {flash && <AlertMessage alertType={flash.type} message={flash.message}/>}
         <div>
-          <Table striped>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Nombre completo</th>
-                <th>Email</th>
-                <th>Telefono</th>
-                <th>Opciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {
-                users.map((user) => {
-                  return <Item key={user.id} user={user} deleteItem={this.deleteItem}/>
-                })
-              }
-            </tbody>
-          </Table>
-          <Pagination className="pagination" >
-            <PaginationItem>
-              <PaginationLink previous onClick={this.previousItem}/>
-            </PaginationItem>
-            {
-              new Array(pageCount).fill(0).map((val, index) => {
-                return(
-                  <PaginationItem key={index} active={index + 1 === selectedPage}>
-                    <PaginationLink data-page={index + 1} onClick={this.getPage}>
-                      {index + 1}
-                    </PaginationLink>
-                  </PaginationItem>
-                )
-              })
-            }
-            <PaginationItem>
-              <PaginationLink next onClick={this.nextItem}/>
-            </PaginationItem>
-          </Pagination>
+          <input type="text" placeholder="No funciona de momento..." className="search" value={this.state.searchValue} onChange={evt => this.matchUsers(evt.target.value)} ></input>
         </div>
+        <ReactTable
+          defaultPageSize={15}
+          data={this.state.userList}
+          columns={columns}
+          pages={this.state.pageZise}
+          loading={this.state.loading}
+          manual
+          onPageChange={(page) => this.handlePage(page)}
+          onFetchData = {this.fetchUsers}
+        />
       </div>
     )
   }

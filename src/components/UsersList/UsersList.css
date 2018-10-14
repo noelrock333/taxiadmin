@@ -1,0 +1,25 @@
+.iconsUserList {
+  width: 20px;
+  height: 20px;
+}
+
+.userListButtons { 
+  background-color: transparent;
+  border: 0
+}
+
+.search {
+  border-radius:10px;
+  border: 2px solid black;
+  margin: auto auto;
+  display: flex;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  width: 300px;
+  height: 50px;
+}
+
+.ReactTable .-pagination .-pageSizeOptions {
+  visibility: hidden
+  /* Currently set to hidden to disable a nasty bug related to pagination. Working on a fix */
+}
