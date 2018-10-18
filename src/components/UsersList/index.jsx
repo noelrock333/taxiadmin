@@ -63,6 +63,7 @@ export default class UsersList extends Component {
             message: res.data.flash[0]
           }
         })
+        this.fetchUsers()
       })
       .catch((err) => {
         this.setState({
