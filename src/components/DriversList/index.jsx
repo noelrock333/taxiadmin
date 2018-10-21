@@ -1,43 +1,67 @@
-import React, {Component} from 'react';
-import { Table } from 'reactstrap';
+import React, { Component } from 'react';
 import Api from '../../utils/api';
-import Item from './Item';
 import AlertMessage from '../../sharedComponents/AlertMessage';
-import { Pagination, PaginationItem, PaginationLink } from 'reactstrap';
+import ReactTable from 'react-table';
+import 'react-table/react-table.css'
+import './DriversList.css'
 
 export default class DriversList extends Component {
 
-  state = {
-    drivers: [],
-    errors: null,
-    flash: null,
-    selectedPage: 1
+  constructor() {
+    super()
+    this.state = {
+      driversRaw: [],
+      errors: null,
+      flash: null,
+      driversList: [],
+      pages: 0,
+      currentPage: 0,
+      searchValue: '',
+      loading: true,
+    }
   }
 
   componentDidMount() {
-    const flash = this.props.location.flash;
-    if (flash) this.setState({flash});
-    Api.get('/drivers')
-      .then(res => {
-        const {drivers, pageCount} = res.data;
-        this.setState({
-          drivers,
-          pageCount
-        })
-      });
+    this.fetchDrivers()
   }
 
-  deleteItem = (driver_id) => {
-    Api.delete(`/driver/${driver_id}`)
+  confirmDelete = (usrId) => {
+    var opcion = window.confirm("Eliminar?");
+    if (opcion == true) {
+      this.deleteUser(usrId)
+    }
+  } 
+
+  fetchDrivers () {
+    this.setState({ loading: true })
+    Api.get(`/drivers?page=${this.state.currentPage+1}`)
+    .then(res => {
+      this.setState({
+        driversRaw: res.data.drivers,
+        pages: res.data.pageCount,
+        loading: false
+      }, () => {
+        this.formatFetchedDrivers(this.state.driversRaw)
+      })
+    }).catch((err) => {
+      this.setState({
+        errors: err.response.data.errors
+      })
+    })
+  }
+
+  deleteDriver = (usrId) => {
+    Api.delete(`/driver/${usrId}`)
       .then(res => {
-        const drivers = this.state.drivers.filter((driver) => driver.id !== driver_id)
+        const users = this.state.users.filter((user) => user.id !== usrId)
         this.setState({
-          drivers,
+          users,
           flash: {
             type: "success",
             message: res.data.flash[0]
           }
         })
+        this.fetchDrivers()
       })
       .catch((err) => {
         this.setState({
@@ -48,117 +72,137 @@ export default class DriversList extends Component {
 
   toggleActivation = (driver_id) => {
     Api.put(`/driver/${driver_id}/activate`)
-      .then(res => {
-        let drivers = this.state.drivers.map((driver) => {
-          if (driver.id === driver_id) {
-            return {...driver, active: res.data.active};
-          } else {
-            return driver;
-          }
-        });
-        this.setState({
-          drivers
-        })
+      .then((res) => {
+        this.fetchDrivers()
       })
       .catch((err) => {
         this.setState({
-          errors: { message: err.response.data.errors[0] }
-        })
-      });
-  }   
-
-  nextItem = () => {
-    const {selectedPage, pageCount} = this.state;
-    if (selectedPage < pageCount){
-      Api.get(`/drivers?page=${selectedPage + 1}`)
-        .then(res => {
-          const {drivers, pageCount} = res.data;
-          this.setState({
-            drivers,
-            selectedPage: selectedPage + 1,
-            pageCount
-          })
-        });
-    }
-  }
-
-  previousItem = () => {
-    const {selectedPage} = this.state;
-    if (selectedPage > 1){
-      Api.get(`/drivers?page=${selectedPage - 1}`)
-        .then(res => {
-          const {drivers, pageCount} = res.data;
-          this.setState({
-            drivers,
-            selectedPage: selectedPage - 1,
-            pageCount
-          })
-        });
-    }
-  }
-
-  getPage = event => {
-    const page = parseInt(event.target.dataset.page);
-    Api.get(`/drivers?page=${page}`)
-      .then(res => {
-        const {drivers, pageCount} = res.data;
-        this.setState({
-          drivers,
-          selectedPage: page,
-          pageCount
+          errors: { message: err.response.data.errors }
         })
       });
   }
 
-  render(){
-    const {drivers, errors, flash, pageCount, selectedPage} = this.state;
+  handlePage(page) {
+    this.setState({
+      currentPage: page 
+    }, () => {
+      if(this.state.searchValue.length !== 0 && this.state.searchValue !== ' '){
+        this.matchDrivers(this.state.searchValue)
+      } else {
+        this.fetchDrivers()
+      }    
+    })
+  }
 
-    return(
+  matchDrivers = (value) => {
+    if(value.length !== 0 && value !== ' ') {
+      this.setState({
+        searchValue: value
+      }, () => {
+        Api.get(`/drivers-search/?search=${this.state.searchValue}&page=${this.state.currentPage+1}`)
+          .then((res) => {
+            console.log(res)
+            this.setState({
+              driversRaw: res.data.drivers,
+              pages: res.data.pageCount,
+              loading: false
+            }, () => {
+              this.formatFetchedDrivers(this.state.driversRaw)
+            })
+          }).catch((err) => {
+            this.setState({
+              errors: err.response.data.errors
+            })
+          })
+      })
+    } else {
+      this.setState({
+        searchValue: ''
+      }, () => {
+        this.fetchDrivers()
+      })
+    } 
+  }
+
+  formatFetchedDrivers = (drivers) => {
+    var data = [];
+    data = drivers.map((driver) => {
+      const newDrivr = {}
+      newDrivr.usrId = driver.id
+      newDrivr.id = driver.id
+      newDrivr.email = driver.email
+      newDrivr.licence = driver.license_number,
+      newDrivr.phoneNumber = driver.phone_number,
+      newDrivr.name = driver.full_name,
+      newDrivr.gafete = driver.public_service_permission_image,
+      newDrivr.isActive = driver.active
+      return newDrivr
+    })
+    this.setState({
+      driversList: data
+    })
+  }
+
+  handleClick (driverId) {
+    this.toggleActivation(driverId)
+  }
+  
+  render() {
+    const columns = [
+      {
+        Header: 'Licencia',
+        accessor: 'licence'
+      },
+      {
+        Header: 'Nombre Completo',
+        accessor: 'name'
+      },
+      {
+        Header: 'Email',
+        accessor: 'email'
+      },
+      {
+        Header: 'Telefono',
+        accessor: 'phoneNumber'
+      },
+      {
+        Header: 'Gafete',
+        Cell: (row) => {
+          return <div><img height={40} src={row.original.gafete}/></div>
+        }
+      },
+      {
+        Header: 'Activo',
+        Cell: (row) => {
+          return <label className="switch"> <input type="checkbox" onChange={() => this.handleClick(row.original.id)} checked={row.original.isActive}></input> <span className="slider round"></span> </label>
+        }
+      },
+      {
+        Header: '',
+        Cell: row => (
+          <div>
+             <button className="userListButtons"><img src={require('../../images/pencil.png')} className="iconsUserList" onClick={() =>  this.toggleActivation(row.original.id)}/></button>
+             <button className="userListButtons"><img src={require('../../images/trash.png')} className="iconsUserList" onClick={() => this.confirmDelete(row.original)}/></button>
+          </div>
+        ) 
+      }
+    ]
+
+    return (
       <div>
-        <h2>Taxistas</h2>
-        {errors && <AlertMessage message={alert.message}/>}
-        {flash && <AlertMessage alertType={flash.type} message={flash.message}/>}
         <div>
-          <Table striped>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Licencia</th>
-                <th>user_id</th>
-                <th>Email</th>
-                <th>Telefono</th>
-                <th>Gafete</th>
-                <th>Opciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {
-                drivers.map((driver) => {
-                  return <Item key={driver.id} driver={driver} deleteItem={this.deleteItem} toggleActivation={this.toggleActivation}/>
-                })
-              }
-            </tbody>
-          </Table>
-          <Pagination className="pagination" >
-            <PaginationItem>
-              <PaginationLink previous onClick={this.previousItem}/>
-            </PaginationItem>
-            {
-              new Array(pageCount).fill(0).map((val, index) => {
-                return(
-                  <PaginationItem key={index} active={index + 1 === selectedPage}>
-                    <PaginationLink data-page={index + 1} onClick={this.getPage}>
-                      {index + 1}
-                    </PaginationLink>
-                  </PaginationItem>
-                )
-              })
-            }
-            <PaginationItem>
-              <PaginationLink next onClick={this.nextItem}/>
-            </PaginationItem>
-          </Pagination>
+          <input type="text" placeholder="Buscar..." className="search" value={this.state.searchValue} onChange={evt => this.matchDrivers(evt.target.value)} ></input>
         </div>
+        <ReactTable
+          pageSize={this.state.pageSize}
+          defaultPageSize={15}
+          data={this.state.driversList}
+          columns={columns}
+          pages={this.state.pages}
+          loading={this.state.loading}
+          manual
+          onPageChange ={(page) => this.handlePage(page)}
+        />
       </div>
     )
   }

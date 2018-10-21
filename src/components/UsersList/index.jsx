@@ -10,19 +10,21 @@ export default class UsersList extends Component {
     super()
     this.state = { 
       users: [],
-      pageZise: 0,
-      resized: [],
+      pages: 0,
       currentPage: 0,
       errors: null,
       searchValue: '',
       loading: true
     }
-    this.fetchUsers = this.fetchUsers.bind(this)
+  }
+
+  componentDidMount() {
+    this.fetchUsers()
   }
 
   confirmDelete = (usrId) => {
     var opcion = window.confirm("Eliminar?");
-    if (opcion == true) {
+    if (opcion === true) {
       this.deleteUser(usrId)
     }
   } 
@@ -32,7 +34,7 @@ export default class UsersList extends Component {
     Api.get(`/users?page=${this.state.currentPage+1}`)
       .then(res => {
         this.setState({
-          pageZise: res.data.pageCount,
+          pages: res.data.pageCount,
           users: res.data.users,
           loading: false
         }, () => {
@@ -77,11 +79,11 @@ export default class UsersList extends Component {
       this.setState({
         searchValue: value
       }, () => {
-        var valueToMatch = this.state.searchValue
-        Api.get(`/users-search/?search=${this.state.searchValue}`)
-          .then(({data}) => {
+        Api.get(`/users-search/?search=${this.state.searchValue}&page=${this.state.currentPage+1}`)
+          .then((res) => {
             this.setState({
-              users: data
+              users: res.data.users,
+              pages: res.data.pageCount
             }, () => {
               this.formatUsersForTable(this.state.users)
             })
@@ -119,10 +121,13 @@ export default class UsersList extends Component {
     this.setState({
       currentPage: page 
     }, () => {
-      this.fetchUsers()
+      if(this.state.searchValue.length !== 0 && this.state.searchValue !== ' '){
+        this.matchUsers(this.state.searchValue)
+      } else {
+        this.fetchUsers()
+      }
     })
   }
-
 
   render(){
     const columns = [{
@@ -138,8 +143,8 @@ export default class UsersList extends Component {
       Header: '',
        Cell: row => (
            <div>
-              <button className="userListButtons"><img src={require('../../images/pencil.png')} className="iconsUserList" onClick={() =>  this.editUser(row.original.id)}/></button>
-              <button className="userListButtons"><img src={require('../../images/trash.png')} className="iconsUserList" onClick={() => this.confirmDelete(row.original.id)}/></button>
+              <button className="userListButtons"><img alt="Editar" src={require('../../images/pencil.png')} className="iconsUserList" onClick={() =>  this.editUser(row.original.id)}/></button>
+              <button className="userListButtons"><img alt="Borrar" src={require('../../images/trash.png')} className="iconsUserList" onClick={() => this.confirmDelete(row.original.id)}/></button>
            </div>
        )
       }
@@ -147,17 +152,16 @@ export default class UsersList extends Component {
     return(
       <div>
         <div>
-          <input type="text" placeholder="No funciona de momento..." className="search" value={this.state.searchValue} onChange={evt => this.matchUsers(evt.target.value)} ></input>
+          <input type="text" placeholder="Buscar..." className="search" value={this.state.searchValue} onChange={evt => this.matchUsers(evt.target.value)} ></input>
         </div>
         <ReactTable
           defaultPageSize={15}
           data={this.state.userList}
           columns={columns}
-          pages={this.state.pageZise}
+          pages={this.state.pages}
           loading={this.state.loading}
           manual
           onPageChange={(page) => this.handlePage(page)}
-          onFetchData = {this.fetchUsers}
         />
       </div>
     )
