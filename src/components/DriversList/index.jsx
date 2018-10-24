@@ -127,20 +127,21 @@ export default class DriversList extends Component {
   formatFetchedDrivers = (drivers) => {
     var data = [];
     data = drivers.map((driver) => {
-      const newDrivr = {}
-      newDrivr.usrId = driver.id
-      newDrivr.id = driver.id
-      newDrivr.email = driver.email
-      newDrivr.licence = driver.license_number,
-      newDrivr.phoneNumber = driver.phone_number,
-      newDrivr.name = driver.full_name,
-      newDrivr.gafete = driver.public_service_permission_image,
-      newDrivr.isActive = driver.active
-      return newDrivr
-    })
+      return {
+        usrId: driver.id,
+        id: driver.id,
+        email: driver.email,
+        licence: driver.license_number,
+        phoneNumber: driver.phone_number,
+        name: driver.full_name,
+        gafete: driver.public_service_permission_image,
+        isActive: driver.active,
+      }
+    });
+
     this.setState({
       driversList: data
-    })
+    });
   }
 
   handleClick (driverId) {
@@ -168,7 +169,11 @@ export default class DriversList extends Component {
       {
         Header: 'Gafete',
         Cell: (row) => {
-          return <div><img height={40} src={row.original.gafete}/></div>
+          return (
+            <a href={`${process.env.REACT_APP_BASE_URL}/${row.original.gafete}`}>
+              <img height={60} src={`${process.env.REACT_APP_BASE_URL}/${row.original.gafete}`}/>
+            </a>
+          )
         }
       },
       {
