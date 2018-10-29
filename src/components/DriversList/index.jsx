@@ -22,18 +22,19 @@ export default class DriversList extends Component {
   }
 
   componentDidMount() {
-    this.fetchDrivers()
+    this.fetchDrivers();
   }
 
   confirmDelete = (usrId) => {
-    var opcion = window.confirm("Eliminar?");
-    if (opcion == true) {
-      this.deleteUser(usrId)
+    var option = window.confirm("Eliminar?");
+    if (option == true) {
+      this.deleteDriver(usrId);
     }
   } 
 
-  fetchDrivers () {
-    this.setState({ loading: true })
+  fetchDrivers = () => {
+    this.setState({ loading: true });
+
     Api.get(`/drivers?page=${this.state.currentPage+1}`)
     .then(res => {
       this.setState({
@@ -53,15 +54,17 @@ export default class DriversList extends Component {
   deleteDriver = (usrId) => {
     Api.delete(`/driver/${usrId}`)
       .then(res => {
-        const users = this.state.users.filter((user) => user.id !== usrId)
+        const users = this.state.users.filter((user) => user.id !== usrId);
+
         this.setState({
           users,
           flash: {
             type: "success",
             message: res.data.flash[0]
           }
-        })
-        this.fetchDrivers()
+        });
+
+        this.fetchDrivers();
       })
       .catch((err) => {
         this.setState({
@@ -87,9 +90,9 @@ export default class DriversList extends Component {
       currentPage: page 
     }, () => {
       if(this.state.searchValue.length !== 0 && this.state.searchValue !== ' '){
-        this.matchDrivers(this.state.searchValue)
+        this.matchDrivers(this.state.searchValue);
       } else {
-        this.fetchDrivers()
+        this.fetchDrivers();
       }    
     })
   }
@@ -112,14 +115,14 @@ export default class DriversList extends Component {
           }).catch((err) => {
             this.setState({
               errors: err.response.data.errors
-            })
-          })
+            });
+          });
       })
     } else {
       this.setState({
         searchValue: ''
       }, () => {
-        this.fetchDrivers()
+        this.fetchDrivers();
       })
     } 
   }
@@ -179,15 +182,24 @@ export default class DriversList extends Component {
       {
         Header: 'Activo',
         Cell: (row) => {
-          return <label className="switch"> <input type="checkbox" onChange={() => this.handleClick(row.original.id)} checked={row.original.isActive}></input> <span className="slider round"></span> </label>
+          return (
+            <label className="switch">
+              <input type="checkbox" onChange={() => this.handleClick(row.original.id)} checked={row.original.isActive} />
+              <span className="slider round" />
+            </label>
+          )
         }
       },
       {
         Header: '',
         Cell: row => (
           <div>
-             <button className="userListButtons"><img src={require('../../images/pencil.png')} className="iconsUserList" onClick={() =>  this.toggleActivation(row.original.id)}/></button>
-             <button className="userListButtons"><img src={require('../../images/trash.png')} className="iconsUserList" onClick={() => this.confirmDelete(row.original)}/></button>
+            <button className="userListButtons">
+              <img src={require('../../images/pencil.png')} className="iconsUserList" onClick={() =>  this.toggleActivation(row.original.id)}/>
+            </button>
+            <button className="userListButtons">
+              <img src={require('../../images/trash.png')} className="iconsUserList" onClick={() => this.confirmDelete(row.original.id)}/>
+            </button>
           </div>
         ) 
       }
