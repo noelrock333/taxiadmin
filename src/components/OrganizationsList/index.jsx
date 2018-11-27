@@ -17,7 +17,8 @@ export default class DriversList extends Component {
       pages: 0,
       errors: null,
       name: '',
-      flash: null
+      flash: null,
+      siteName: ''
     }
   }
 
@@ -102,6 +103,23 @@ export default class DriversList extends Component {
       })
   }
 
+  createOrganization = () => {
+    Api.post(`/organizations?name=${this.state.siteName}`)
+      .then(res => {
+        this.setState({
+          flash: {
+            type: "success",
+            message: res.statusText
+          }
+        })
+        this.fetchTaxiSites();
+      })
+      .catch((err) => {
+        this.setState({
+          errors: { message: err.response.data.errors[0]}
+        })
+      })
+  }
 
   render () {
     const columns = [
@@ -132,6 +150,10 @@ export default class DriversList extends Component {
         </div>
         <div className="topMargin">
           <h2>Sitios</h2>
+          <div className="taxiSitesCreateDiv">
+            <input type="text" placeholder="Crear un sitio...." className="siteNameInput" value={this.state.siteName} onChange={(evt) => this.setState({siteName: evt.target.value})}></input>
+            <button type="button" className="createBtn" onClick={() => this.createOrganization()}>Crear</button>
+          </div>
           <ReactTable 
             defaultPageSize={10}
             data={this.state.taxiSitesList}

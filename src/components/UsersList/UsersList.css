@@ -22,4 +22,5 @@
 .ReactTable .-pagination .-pageSizeOptions {
   visibility: hidden
   /* Currently set to hidden to disable a nasty bug related to pagination. Working on a fix */
+  /* Not so nasty, fix almost there, on another branch 11/26/2018 */
 }
