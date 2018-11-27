@@ -54,16 +54,12 @@ export default class DriversList extends Component {
   deleteDriver = (usrId) => {
     Api.delete(`/driver/${usrId}`)
       .then(res => {
-        const users = this.state.users.filter((user) => user.id !== usrId);
-
         this.setState({
-          users,
           flash: {
             type: "success",
             message: res.data.flash[0]
           }
         });
-
         this.fetchDrivers();
       })
       .catch((err) => {
@@ -104,7 +100,6 @@ export default class DriversList extends Component {
       }, () => {
         Api.get(`/drivers-search/?search=${this.state.searchValue}&page=${this.state.currentPage+1}`)
           .then((res) => {
-            console.log(res)
             this.setState({
               driversRaw: res.data.drivers,
               pages: res.data.pageCount,
@@ -150,6 +145,12 @@ export default class DriversList extends Component {
   handleClick (driverId) {
     this.toggleActivation(driverId)
   }
+
+  // editDriver = (usrId) => {
+  //   const path = `/driver/${usrId}`
+  //   const edit_path = `${path}/edit`
+  //   this.props.history.push(edit_path)
+  // }
   
   render() {
     const columns = [
@@ -194,9 +195,10 @@ export default class DriversList extends Component {
         Header: '',
         Cell: row => (
           <div>
-            <button className="userListButtons">
-              <img src={require('../../images/pencil.png')} className="iconsUserList" onClick={() =>  this.toggleActivation(row.original.id)}/>
-            </button>
+            {/* Gone for the moment, the view for drivers edit doesn't exist, might need another story for that */}
+            {/* <button className="userListButtons">
+              <img src={require('../../images/pencil.png')} className="iconsUserList" onClick={() =>  this.editDriver(row.original.id)}/>
+            </button> */}
             <button className="userListButtons">
               <img src={require('../../images/trash.png')} className="iconsUserList" onClick={() => this.confirmDelete(row.original.id)}/>
             </button>
@@ -211,7 +213,6 @@ export default class DriversList extends Component {
           <input type="text" placeholder="Buscar..." className="search" value={this.state.searchValue} onChange={evt => this.matchDrivers(evt.target.value)} ></input>
         </div>
         <ReactTable
-          pageSize={this.state.pageSize}
           defaultPageSize={15}
           data={this.state.driversList}
           columns={columns}
