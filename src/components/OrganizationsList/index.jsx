@@ -31,8 +31,7 @@ export default class DriversList extends Component {
   }
 
   confirmDelete = (siteId) => {
-    var option = window.confirm("Eliminar?")
-    if (option === true) {
+    if (window.confirm("Eliminar?")) {
       this.deleteTaxiSite(siteId)
     }
   }
@@ -73,8 +72,8 @@ export default class DriversList extends Component {
 
   editOrganization = (organizationId) => {
     const path = `/organization/${organizationId}`
-    const edit_path = `${path}/edit`
-    this.props.history.push(edit_path)
+    const editPath = `${editPath}/edit`
+    this.props.history.push(editPath)
   }
 
   handlePage(page) {
@@ -144,10 +143,6 @@ export default class DriversList extends Component {
 
     return (
       <div>
-        <div className="flashMessages">
-          {/* {this.state.errors && <AlertMessage message={alert.message}/>}
-          {this.state.flash && <AlertMessage alertType={this.state.flash.type} message={this.state.flash.message}/>} */}
-        </div>
         <div className="topMargin">
           <h2>Sitios</h2>
           <div className="taxiSitesCreateDiv">

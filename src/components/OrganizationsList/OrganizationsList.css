@@ -2,12 +2,6 @@
     margin-top: 20px
 }
 
-.flashMessages {
-    position: fixed;
-    right: 0px;
-    /* top: px; */
-}
-
 .taxiSitesCreateDiv {
     display: flex;
     justify-content: center;

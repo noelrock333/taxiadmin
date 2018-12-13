@@ -145,12 +145,6 @@ export default class DriversList extends Component {
   handleClick (driverId) {
     this.toggleActivation(driverId)
   }
-
-  // editDriver = (usrId) => {
-  //   const path = `/driver/${usrId}`
-  //   const edit_path = `${path}/edit`
-  //   this.props.history.push(edit_path)
-  // }
   
   render() {
     const columns = [
@@ -199,7 +193,7 @@ export default class DriversList extends Component {
             {/* <button className="userListButtons">
               <img src={require('../../images/pencil.png')} className="iconsUserList" onClick={() =>  this.editDriver(row.original.id)}/>
             </button> */}
-            <button className="userListButtons">
+            <button>
               <img src={require('../../images/trash.png')} className="iconsUserList" onClick={() => this.confirmDelete(row.original.id)}/>
             </button>
           </div>
