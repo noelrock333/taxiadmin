@@ -193,7 +193,7 @@ export default class DriversList extends Component {
             {/* <button className="userListButtons">
               <img src={require('../../images/pencil.png')} className="iconsUserList" onClick={() =>  this.editDriver(row.original.id)}/>
             </button> */}
-            <button>
+             <button className="userListButtons">
               <img src={require('../../images/trash.png')} className="iconsUserList" onClick={() => this.confirmDelete(row.original.id)}/>
             </button>
           </div>
