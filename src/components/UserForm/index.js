@@ -24,16 +24,17 @@ class UserForm extends Component  {
   render() {
     const {user} = this.state;
     return (
-      <Form onSubmit={this.handleSubmit}>
-        <FormGroup>
+      <Form onSubmit={this.handleSubmit} className="mt-4 row justify-content-center flex-column align-items-center">
+        <h2>Edición de usuario</h2>
+        <FormGroup className="col-10 col-sm-8 col-md-6 col-lg-4 mt-4">
           <Label for="email">Email</Label>
           <Input type="email" name="email" id="email" value={user.email} onChange={this.handleChange} />
         </FormGroup>
-        <FormGroup>
-          <Label for="full_name">Full_name</Label>
+        <FormGroup className="col-10 col-sm-8 col-md-6 col-lg-4">
+          <Label for="full_name">Nombre de usuario</Label>
           <Input type="text" name="full_name" id="full_name" value={user.full_name} onChange={this.handleChange} />
         </FormGroup>
-        <Button type="submit">Submit</Button>
+        <Button type="submit">Actualizar</Button>
       </Form>
     )
   }
