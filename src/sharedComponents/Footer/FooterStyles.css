@@ -1,22 +1,22 @@
 .footer {
-    background-color: black;
-    width: 100%;
-    height: 70px;
-    display: flex;
-    justify-content: space-between;      
+	background-color: black;
+	width: 100%;
+	height: 70px;
+	margin: auto;
+	position: relative;
+	text-align: center;
 }
 
 .footer-logo {
-    width: 60px;
-    height: 50px;
-    margin-left: 45%;
-    margin-right: auto;
-    margin-top: 10px;
+	width: 60px;
+	height: 50px;
+	margin: 10px;
 }
 
 .git-logo {
-    width: 40px;
-    height: 40px;
-    margin-top: 15px;
-    margin-right: 10px;
+	width: 60px;
+	height: 50px;
+	position: absolute;
+	margin: 10px 20px;
+	right: 0;
 }
