@@ -38,18 +38,18 @@ export default class TripsList extends Component {
   }
 
   getHoldingTrips = () => {
-    instance()
-      .database()
-      .ref(`server/holding_trips/`)
-      .on('value', snapshot => {
-        console.log(snapshot.val())
-        const trips = snapshot.val()
-        if (trips && this.state.status === 'holding') {
-          this.setState({ trips: Object.values(trips) })
-        } else {
-          this.setState({ trips: [], pageCount: 0 })
-        }
-      })
+    // instance()
+    //   .database()
+    //   .ref(`server/holding_trips/`)
+    //   .on('value', snapshot => {
+    //     console.log(snapshot.val())
+    //     const trips = snapshot.val()
+    //     if (trips && this.state.status === 'holding') {
+    //       this.setState({ trips: Object.values(trips) })
+    //     } else {
+    //       this.setState({ trips: [], pageCount: 0 })
+    //     }
+    //   })
   }
 
   deleteItem = (trip_id) => {
