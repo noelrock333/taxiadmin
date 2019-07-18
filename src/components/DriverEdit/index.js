@@ -24,8 +24,18 @@ class DriverEdit extends Component {
       })
   }
 
-  handleSubmit = ({ id, license_number, phone_number}) =>{
-        Api.put(`/driver/${id}`, {license_number, phone_number})
+  handleSubmit = ({ id, email, full_name, license_number, phone_number, image_file}) =>{
+    const request = new FormData()
+    request.append('id', id)
+    request.append('email', email)
+    request.append('full_name', full_name)
+    request.append('license_number', license_number)
+    request.append('phone_number', phone_number)
+    if(image_file){
+      request.append('public_service_permission_image', image_file, image_file.name)
+    }
+
+    Api.put(`/driver/${id}`, request, {'Content-Type': 'multipart/form-data' })
       .then(({data}) => {
         this.props.history.push({
           pathname: '/drivers',

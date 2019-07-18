@@ -195,7 +195,6 @@ export default class DriversList extends Component {
         Header: 'Gestión',
         Cell: row => (
           <div>
-            {/* Gone for the moment, the view for drivers edit doesn't exist, might need another story for that */}
             <button className="userListButtons">
               <img src={require('../../images/pencil.png')} className="iconsUserList" onClick={() =>  this.editDriver(row.original.id)}/>
             </button>
