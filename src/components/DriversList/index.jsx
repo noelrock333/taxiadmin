@@ -30,7 +30,7 @@ export default class DriversList extends Component {
     if (option == true) {
       this.deleteDriver(usrId);
     }
-  } 
+  }
 
   fetchDrivers = () => {
     this.setState({ loading: true });
@@ -69,6 +69,12 @@ export default class DriversList extends Component {
       });
   }
 
+  editDriver = (driverID) => {
+    const path = `/driver/${driverID}`
+    const edit_path = `${path}/edit`
+    this.props.history.push(edit_path)
+  }
+
   toggleActivation = (driver_id) => {
     Api.put(`/driver/${driver_id}/activate`)
       .then((res) => {
@@ -83,13 +89,13 @@ export default class DriversList extends Component {
 
   handlePage(page) {
     this.setState({
-      currentPage: page 
+      currentPage: page
     }, () => {
       if(this.state.searchValue.length !== 0 && this.state.searchValue !== ' '){
         this.matchDrivers(this.state.searchValue);
       } else {
         this.fetchDrivers();
-      }    
+      }
     })
   }
 
@@ -119,7 +125,7 @@ export default class DriversList extends Component {
       }, () => {
         this.fetchDrivers();
       })
-    } 
+    }
   }
 
   formatFetchedDrivers = (drivers) => {
@@ -145,7 +151,7 @@ export default class DriversList extends Component {
   handleClick (driverId) {
     this.toggleActivation(driverId)
   }
-  
+
   render() {
     const columns = [
       {
@@ -186,18 +192,17 @@ export default class DriversList extends Component {
         }
       },
       {
-        Header: '',
+        Header: 'Gestión',
         Cell: row => (
           <div>
-            {/* Gone for the moment, the view for drivers edit doesn't exist, might need another story for that */}
-            {/* <button className="userListButtons">
+            <button className="userListButtons">
               <img src={require('../../images/pencil.png')} className="iconsUserList" onClick={() =>  this.editDriver(row.original.id)}/>
-            </button> */}
+            </button>
              <button className="userListButtons">
               <img src={require('../../images/trash.png')} className="iconsUserList" onClick={() => this.confirmDelete(row.original.id)}/>
             </button>
           </div>
-        ) 
+        )
       }
     ]
 

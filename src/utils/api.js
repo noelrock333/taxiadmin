@@ -2,12 +2,6 @@ import axios from 'axios';
 
 class Api {
   static headers = async function(contentType) {
-    return {
-      'Content-Type': contentType || 'application/json'
-    };
-  };
-
-  static headers = async function(contentType) {
     const jwt = process.env.REACT_APP_ADMIN_TOKEN;
     let auth_header = 'Bearer ' + jwt;
     return {
@@ -17,10 +11,10 @@ class Api {
   };
 
   // Todas las llamadas pasan por aquí
-  static xhr = async function(route, params, verb) {
+  static xhr = async function(route, params, verb, optionalHeaders) {
     const host = `${process.env.REACT_APP_BASE_URL}/api/admin`;
     const url = `${host}${route}`;
-    const headers = await this.headers();
+    const headers = await this.headers(optionalHeaders);
     const options = {
       url: url,
       method: verb,
@@ -38,8 +32,8 @@ class Api {
     return this.xhr(route, params, 'POST');
   }
 
-  static put(route, params) {
-    return this.xhr(route, params, 'PUT');
+  static put(route, params, headers) {
+    return this.xhr(route, params, 'PUT', headers);
   }
 
   static delete(route, params) {
