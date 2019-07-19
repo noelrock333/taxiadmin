@@ -51,7 +51,7 @@ export default class DriversList extends Component {
       this.setState({
         errors: err.response.data.errors
       })
-    }) 
+    })
   }
 
   formatFetchedSites = (taxiSites) => {
@@ -78,9 +78,9 @@ export default class DriversList extends Component {
 
   handlePage(page) {
     this.setState({
-      currentPage: page 
+      currentPage: page
     }, () => {
-      this.fetchTaxiSites();    
+      this.fetchTaxiSites();
     })
   }
 
@@ -137,7 +137,7 @@ export default class DriversList extends Component {
               <img src={require('../../images/trash.png')} className="iconsUserList" onClick={() => this.confirmDelete(row.original.siteId)}/>
             </button>
           </div>
-        ) 
+        )
       }
     ]
 
@@ -149,7 +149,7 @@ export default class DriversList extends Component {
             <input type="text" placeholder="Crear un sitio...." className="siteNameInput" value={this.state.siteName} onChange={(evt) => this.setState({siteName: evt.target.value})}></input>
             <button type="button" className="createBtn" onClick={() => this.createOrganization()}>Crear</button>
           </div>
-          <ReactTable 
+          <ReactTable
             defaultPageSize={10}
             data={this.state.taxiSitesList}
             columns={columns}
