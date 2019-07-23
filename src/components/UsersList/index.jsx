@@ -8,7 +8,7 @@ export default class UsersList extends Component {
 
   constructor () {
     super()
-    this.state = { 
+    this.state = {
       users: [],
       pages: 0,
       currentPage: 0,
@@ -27,7 +27,7 @@ export default class UsersList extends Component {
     if (opcion === true) {
       this.deleteUser(usrId)
     }
-  } 
+  }
 
   fetchUsers () {
     this.setState({ loading: true });
@@ -46,7 +46,7 @@ export default class UsersList extends Component {
           errors: err.response.data.errors
         })
       });
-  } 
+  }
 
   editUser = (usrId) => {
     const path = `/user/${usrId}`
@@ -99,9 +99,9 @@ export default class UsersList extends Component {
       }, () => {
         this.fetchUsers()
       })
-    } 
+    }
   }
-  
+
   formatUsersForTable = (users) => {
     var data = [];
     data = users.map(user => {
@@ -119,7 +119,7 @@ export default class UsersList extends Component {
 
   handlePage(page) {
     this.setState({
-      currentPage: page 
+      currentPage: page
     }, () => {
       if(this.state.searchValue.length !== 0 && this.state.searchValue !== ' '){
         this.matchUsers(this.state.searchValue)
@@ -151,6 +151,7 @@ export default class UsersList extends Component {
     ]
     return(
       <div>
+        <h2 className="text-center my-4">Usuarios</h2>
         <div>
           <input type="text" placeholder="Buscar..." className="search" value={this.state.searchValue} onChange={evt => this.matchUsers(evt.target.value)} ></input>
         </div>

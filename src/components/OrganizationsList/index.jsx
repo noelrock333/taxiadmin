@@ -144,7 +144,7 @@ export default class DriversList extends Component {
     return (
       <div>
         <div className="topMargin">
-          <h2>Sitios</h2>
+          <h2 className="text-center my-4">Sitios</h2>
           <div className="taxiSitesCreateDiv">
             <input type="text" placeholder="Crear un sitio...." className="siteNameInput" value={this.state.siteName} onChange={(evt) => this.setState({siteName: evt.target.value})}></input>
             <button type="button" className="createBtn" onClick={() => this.createOrganization()}>Crear</button>
