@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import './tripList.css'
 import { Table } from 'reactstrap';
 import Api from '../../utils/api';
 import { init, instance } from '../../firebase'
@@ -138,16 +139,16 @@ export default class TripsList extends Component {
     const {trips, errors, flash, pageCount, selectedPage, status} = this.state;
     return(
       <div>
-        <h2>Servicios activos</h2>
-        <div>
-          <select name="" id="" onChange={this.onStatusChange} value={status}>
+        <h2 className="text-center my-4">Servicios</h2>
+        <div className="form-inline mb-2">
+          <select name="" id="" onChange={this.onStatusChange} value={status} className="form-control">
             <option value="holding">En espera</option>
             <option value="finished">Finalizados</option>
             {/*<option value="taken">Tomado</option>*/}
             <option value="active">Activo/Tomado</option>
             <option value="canceled">Cancelado</option>
           </select>
-          <button onClick={this.logTimes}>
+          <button onClick={this.logTimes} className="btn btn-outline-dark ml-2">
             Log tiempos
           </button>
         </div>
@@ -182,17 +183,19 @@ export default class TripsList extends Component {
             <PaginationItem>
               <PaginationLink previous onClick={this.previousItem}/>
             </PaginationItem>
-            {
-              new Array(pageCount).fill(0).map((val, index) => {
-                return(
-                  <PaginationItem key={index} active={index + 1 === selectedPage}>
-                    <PaginationLink data-page={index + 1} onClick={this.getPage}>
-                      {index + 1}
-                    </PaginationLink>
-                  </PaginationItem>
-                )
-              })
-            }
+            <div className="horizontal-scrolable">
+              {
+                new Array(pageCount).fill(0).map((val, index) => {
+                  return(
+                    <PaginationItem key={index} active={index + 1 === selectedPage}>
+                      <PaginationLink data-page={index + 1} onClick={this.getPage}>
+                        {index + 1}
+                      </PaginationLink>
+                    </PaginationItem>
+                  )
+                })
+              }
+            </div>
             <PaginationItem>
               <PaginationLink next onClick={this.nextItem}/>
             </PaginationItem>

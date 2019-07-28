@@ -1,0 +1,9 @@
+.pagination {
+  width: 100%;
+}
+
+.horizontal-scrolable {
+  display: flex;
+  overflow: scroll;
+  widows: 100%;
+}

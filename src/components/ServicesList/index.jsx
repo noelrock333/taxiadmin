@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import './servicesList.css'
 import { Table } from 'reactstrap';
 import Api from '../../utils/api';
 import Item from './Item';
@@ -93,7 +94,7 @@ export default class ServicesList extends Component {
     const {services, errors, flash, pageCount, selectedPage} = this.state;
     return(
       <div>
-        <h2>Taxistas</h2>
+        <h2 className="text-center my-4">Tipos de servicios</h2>
         {errors && <AlertMessage message={alert.message}/>}
         {flash && <AlertMessage alertType={flash.type} message={flash.message}/>}
         <div>

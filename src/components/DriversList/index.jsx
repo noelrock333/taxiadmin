@@ -208,6 +208,7 @@ export default class DriversList extends Component {
 
     return (
       <div>
+        <h2 className="text-center my-4">Taxistas</h2>
         <div>
           <input type="text" placeholder="Buscar..." className="search" value={this.state.searchValue} onChange={evt => this.matchDrivers(evt.target.value)} ></input>
         </div>
