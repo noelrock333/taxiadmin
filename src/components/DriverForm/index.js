@@ -35,14 +35,14 @@ class DriverForm extends Component  {
 
      return(
        <Form onSubmit={this.handleSubmit} className="mt-4 row justify-content-center flex-column align-items-center">
-        <h2>Edición de taxista</h2>
+        <h2>{this.props.title}</h2>
         <FormGroup className="col-10 col-sm-8 col-md-6 col-lg-4 mt-4">
           <Label for="full_name">Nombre</Label>
-          <Input name="full_name" value={driver.full_name} id="phone_number" onChange={this.handleChange} maxLength="60"></Input>
+          <Input name="full_name" value={driver.full_name} id="full_name" onChange={this.handleChange} maxLength="60"></Input>
         </FormGroup>
         <FormGroup className="col-10 col-sm-8 col-md-6 col-lg-4">
           <Label for="email">Email</Label>
-          <Input name="email" value={driver.email} id="phone_number" onChange={this.handleChange} maxLength="50"></Input>
+          <Input name="email" value={driver.email} id="email" onChange={this.handleChange} maxLength="50"></Input>
         </FormGroup>
         <FormGroup className="col-10 col-sm-8 col-md-6 col-lg-4">
           <Label for="licencia" >Número de licencia</Label>
@@ -52,10 +52,16 @@ class DriverForm extends Component  {
           <Label for="phone_number">Teléfono</Label>
           <Input name="phone_number" value={driver.phone_number} id="phone_number" onChange={this.handleChange} maxLength="10"></Input>
         </FormGroup>
+        { !driver.id &&
+          <FormGroup className="col-10 col-sm-8 col-md-6 col-lg-4">
+            <Label for="password">Contraseña</Label>
+            <Input type="password" name="password" value={driver.password} id="password" onChange={this.handleChange} maxLength="25"></Input>
+          </FormGroup>
+        }
         <Label >Gaféte</Label>
         { driver.public_service_permission_image && <img height={220} src={`${process.env.REACT_APP_BASE_URL}/${driver.public_service_permission_image}`}/>}
         <input type="file" name="public_service_permission_image" onChange={this.handleImage} accept=".png,.jpg,.jpeg" className="mt-2 inputfile"></input>
-        <Button type="submit" className="mt-2">Actualizar</Button>
+        <Button type="submit" className="mt-2">{this.props.buttonAction}</Button>
        </Form>
      )
    }

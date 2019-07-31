@@ -54,7 +54,7 @@ class DriverEdit extends Component {
     return(
       <div>
         { errors && <Alert message={errors[0]}/>}
-        { driver && <DriverForm driver={driver} onSubmit={this.handleSubmit}/>}
+        { driver && <DriverForm driver={driver} onSubmit={this.handleSubmit} title={"Edición de taxista"} buttonAction={"Actualizar"}/>}
       </div>
     )
   }
