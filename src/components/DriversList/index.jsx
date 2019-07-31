@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import Api from '../../utils/api';
 import AlertMessage from '../../sharedComponents/AlertMessage';
 import ReactTable from 'react-table';
-import 'react-table/react-table.css'
-import './DriversList.css'
+import 'react-table/react-table.css';
+import './DriversList.css';
+import { Link } from 'react-router-dom';
 
 export default class DriversList extends Component {
 
@@ -209,8 +210,9 @@ export default class DriversList extends Component {
     return (
       <div>
         <h2 className="text-center my-4">Taxistas</h2>
-        <div>
-          <input type="text" placeholder="Buscar..." className="search" value={this.state.searchValue} onChange={evt => this.matchDrivers(evt.target.value)} ></input>
+        <div className="centeredContainer" >
+          <input type="text" placeholder="Buscar..." className="siteNameInput" value={this.state.searchValue} onChange={evt => this.matchDrivers(evt.target.value)} ></input>
+          <Link to="driver/new" className="createBtn">Agregar</Link>
         </div>
         <ReactTable
           defaultPageSize={15}
